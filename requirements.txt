@@ -2,7 +2,6 @@ streamlit
 yfinance
 pandas
 plotly
-pykrx
 requests
 supabase
 setuptools

@@ -3,7 +3,6 @@ import yfinance as yf
 import pandas as pd
 import plotly.express as px
 from supabase import create_client
-from pykrx import stock
 from datetime import datetime, timedelta
 import requests
 import urllib.parse
@@ -249,44 +248,6 @@ else:
         st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
-
-    st.subheader("🏦 외국인 / 기관 수급")
-    supply_name = st.selectbox("수급 볼 종목", df["종목"].tolist())
-
-    supply_item = next(
-        item for item in portfolio
-        if item["stock_name"] == supply_name
-    )
-
-    end = datetime.today()
-    start = end - timedelta(days=14)
-
-    try:
-        supply = stock.get_market_trading_value_by_date(
-            start.strftime("%Y%m%d"),
-            end.strftime("%Y%m%d"),
-            supply_item["stock_code"]
-        )
-
-        if supply.empty:
-            st.info("수급 데이터가 없습니다.")
-        else:
-            supply = supply.reset_index()
-            st.dataframe(supply.tail(10), use_container_width=True)
-
-            cols = [c for c in ["기관합계", "외국인합계"] if c in supply.columns]
-
-            if cols:
-                fig_supply = px.line(
-                    supply,
-                    x="날짜",
-                    y=cols,
-                    title=f"{supply_name} 외국인 / 기관 순매수"
-                )
-                st.plotly_chart(fig_supply, use_container_width=True)
-
-    except Exception as e:
-        st.warning(f"수급 데이터를 불러오지 못했습니다: {e}")
 
 st.divider()
 
